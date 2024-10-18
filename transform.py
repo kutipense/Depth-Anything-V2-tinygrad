@@ -1,7 +1,6 @@
 import cv2
 import numpy as np
 from tinygrad import Tensor
-from torchvision.transforms import Compose
 
 
 class Resize(object):
@@ -164,24 +163,23 @@ class PrepareForNet(object):
 
 
 def image2tensor(raw_image, input_size=518):
-    transform = Compose(
-        [
-            Resize(
-                width=input_size,
-                height=input_size,
-                resize_target=False,
-                keep_aspect_ratio=False,
-                ensure_multiple_of=14,
-                resize_method="lower_bound",
-                image_interpolation_method=cv2.INTER_CUBIC,
-            ),
-            NormalizeImage(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
-            PrepareForNet(),
-        ]
-    )
+    transforms = [
+        Resize(
+            width=input_size,
+            height=input_size,
+            resize_target=False,
+            keep_aspect_ratio=False,
+            ensure_multiple_of=14,
+            resize_method="lower_bound",
+            image_interpolation_method=cv2.INTER_CUBIC,
+        ),
+        NormalizeImage(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
+        PrepareForNet(),
+    ]
 
     image = cv2.cvtColor(raw_image, cv2.COLOR_BGR2RGB) / 255.0
-    image = transform({"image": image})["image"]
+    for transform in transforms:
+        image = transform({"image": image})["image"]
     image = Tensor(image).unsqueeze(0)
 
     return image, raw_image.shape[:2]
