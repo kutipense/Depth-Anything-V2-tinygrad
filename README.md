@@ -1,6 +1,6 @@
 # Depth-Anything-V2 Tinygrad
 
-This is a single-file `tinygrad` implementation of [Depth-Anything-V2](https://github.com/DepthAnything/Depth-Anything-V2).
+This is a single-file `tinygrad` implementation of [Depth-Anything-V2](https://github.com/DepthAnything/Depth-Anything-V2). Check out the interactive [Demo](https://huggingface.co/spaces/kutipense/Depth-Anything-V2-tinygrad)!
 
 ## Installation
 
