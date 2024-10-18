@@ -2,7 +2,6 @@ import argparse
 from typing import Literal
 
 import cv2
-import matplotlib.pyplot as plt
 import safetensors as st
 from tinygrad import Tensor, nn
 from transform import image2tensor
@@ -66,9 +65,8 @@ if __name__ == "__main__":
     # Run the model and save the output
     output = model(image)
     output = output.interpolate((h, w), mode="linear", align_corners=True).realize()
+    output = output.numpy()[0, 0]
 
-    if args.output:
-        plt.imsave(args.output, output.numpy()[0, 0])
-    else:
-        plt.imshow(output.numpy()[0, 0])
-        plt.show()
+    output = cv2.normalize(output, None, alpha=0, beta=255, norm_type=cv2.NORM_MINMAX, dtype=cv2.CV_8UC1)
+    output = cv2.applyColorMap(output, cv2.COLORMAP_VIRIDIS)
+    cv2.imwrite(args.output if args.output else f"{model_name}.jpg", output)
